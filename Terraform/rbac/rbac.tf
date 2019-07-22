@@ -91,8 +91,9 @@ resource "null_resource" "server_grants" {
       oauth2_permissions = "${join(",", azuread_application.server.oauth2_permissions.*.id)}"
     }
     provisioner "local-exec" {
-      command = <<EOF
-        az ad app permission grant --id ${azuread_application.server.application_id} --api ${azuread_application.server.oauth2_permissions.*.id} --scope ${azuread_application.server.oauth2_permissions.*.value}
+     command = <<EOF
+        %{ for permission in azuread_application.server.oauth2_permissions.* ~}
+az ad app permission grant --id ${azuread_application.server.application_id} --api ${permission.id} --scope ${permission.value} %{ endfor ~}
 EOF
     }
     depends_on = ["azuread_application.server", "azuread_service_principal_password.server"]
@@ -150,13 +151,12 @@ resource "azuread_service_principal_password" "client" {
 # grant permissions for client app
 resource "null_resource" "client_grants" {
     triggers = {
-      oauth2_permissions = "${join(",", azuread_application.client.oauth2_permissions.*.id)}"
+      oauth2_permissions = "${join(",", azuread_application.client.required_resource_access.*.resource_app_id)}"
     }
     provisioner "local-exec" {
       command = <<EOF
-        %{ for permission in azuread_application.client.oauth2_permissions.* ~}
-        az ad app permission grant --id ${azuread_application.client.application_id} --api ${permission.id} --scope ${permission.value}
-        %{ endfor ~}
+        %{ for permission in azuread_application.client.required_resource_access.* ~}
+az ad app permission grant --id ${azuread_application.client.application_id} --api ${permission.resource_app_id} %{ endfor ~}
 EOF
     }
     depends_on = ["azuread_application.client", "azuread_service_principal_password.client"]
