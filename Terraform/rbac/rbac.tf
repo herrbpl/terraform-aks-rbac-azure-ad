@@ -1,3 +1,7 @@
+# Damnnit, Azure CLI SDK has issue which actually prevents correct RBAC secret generation. Like what the hell?
+# https://github.com/Azure/azure-sdk-for-go/issues/5222
+
+
 locals {
   env = "${var.env == "" ? "dev" : var.env}"  
   name = "${var.name == "" ? "app" : var.name}"  
@@ -72,6 +76,7 @@ resource "random_string" "server" {
   }
 }
 
+
 resource "azuread_service_principal_password" "server" {
     service_principal_id = "${azuread_service_principal.server.id}"
     value                = "${random_string.server.result}"    
@@ -84,6 +89,20 @@ resource "azuread_service_principal_password" "server" {
         interpreter = ["PowerShell", "-Command"]
     }
 }
+
+resource "null_resource" "server_password" {
+    triggers = {
+      application_id = "${azuread_application.server.application_id}"
+    }
+    provisioner "local-exec" {
+      command = <<EOF
+        az ad sp credential reset --name ${azuread_application.server.name} --end-date '${local.end_date}' --password  ${random_string.server.result}    
+EOF
+    }
+    depends_on = ["azuread_application.server", "azuread_service_principal.server","random_string.server"]
+    
+}
+
 
 # grant permissions for server app
 resource "null_resource" "server_grants" {
