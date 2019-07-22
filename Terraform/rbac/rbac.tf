@@ -80,7 +80,8 @@ resource "azuread_service_principal_password" "server" {
         ignore_changes = ["end_date"]
     }
     provisioner "local-exec" {
-        command = "sleep 30"
+        command = "Start-Sleep -Seconds 30"
+        interpreter = ["PowerShell", "-Command"]
     }
 }
 
@@ -140,9 +141,11 @@ resource "azuread_service_principal_password" "client" {
         ignore_changes = ["end_date"]
     }
     provisioner "local-exec" {
-        command = "sleep 30"
+        command = "Start-Sleep -Seconds 30"
+        interpreter = ["PowerShell", "-Command"]
     }
 }
+
 
 # grant permissions for client app
 resource "null_resource" "client_grants" {
@@ -151,7 +154,9 @@ resource "null_resource" "client_grants" {
     }
     provisioner "local-exec" {
       command = <<EOF
-        az ad app permission grant --id ${azuread_application.client.application_id} --api ${azuread_application.client.oauth2_permissions.*.id} --scope ${azuread_application.client.oauth2_permissions.*.value}
+        %{ for permission in azuread_application.client.oauth2_permissions.* ~}
+        az ad app permission grant --id ${azuread_application.client.application_id} --api ${permission.id} --scope ${permission.value}
+        %{ endfor ~}
 EOF
     }
     depends_on = ["azuread_application.client", "azuread_service_principal_password.client"]
