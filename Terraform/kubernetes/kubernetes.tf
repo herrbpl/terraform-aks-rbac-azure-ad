@@ -1,5 +1,10 @@
+module "tenantinfo" {
+    source = "../tenantinfo"
+}
+
 locals {
   env = "${var.env == "" ? "dev" : var.env}"  
+  tenantid = "${var.tenantid == "" ? module.tenantinfo.tenantid : var.tenantid}"
 }
 
 resource "azurerm_resource_group" "k8s" {

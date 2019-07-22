@@ -7,10 +7,8 @@ terraform {
     }
 }
 
-module "tenantinfo" {
-    source = "./tenantinfo"    
+
+module "rbac" {
+    source = "./rbac"
 }
 
-output "tenantid" {
-    value = "${module.tenantinfo.tenantid}"
-}

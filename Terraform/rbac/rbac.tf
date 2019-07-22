@@ -3,13 +3,13 @@ locals {
   name = "${var.name == "" ? "app" : var.name}"  
   appname_server    = "${var.prefix}${local.env}-${local.name}-rbac-server"
   appname_client    = "${var.prefix}${local.env}-${local.name}-rbac-client"
-
   end_date = "${var.end_date == "" ? timeadd(timestamp(), "720h") : var.end_date }"
+  
 }
 
 # Create server app
 resource "azuread_application" "server" {
-  name                       = "example"
+  name                       = "${local.appname_server}"
   homepage                   = "https://${local.appname_server}"
   identifier_uris            = ["https://${local.appname_server}"]
   reply_urls                 = ["https://${local.appname_server}"]
@@ -60,11 +60,6 @@ EOF
 # create service principal for app
 resource "azuread_service_principal" "server" {
     application_id = "${azuread_application.server.application_id}"
-    tags       = {
-        Project     = "${var.prefix}"    
-        Environment = "${local.env}"
-        Terraform   = "true"
-    }
 }
 
 # create password for server app
@@ -77,7 +72,7 @@ resource "random_string" "server" {
   }
 }
 
-resource "azuread_service_principal_password" "service" {
+resource "azuread_service_principal_password" "server" {
     service_principal_id = "${azuread_service_principal.server.id}"
     value                = "${random_string.server.result}"    
     end_date             = "${local.end_date}"
@@ -90,3 +85,50 @@ resource "azuread_service_principal_password" "service" {
 }
 
 # grant permissions for server app
+# TODO: bash 
+
+# client application
+
+resource "azuread_application" "client" {
+  name                       = "${local.appname_client}"
+  homepage                   = "https://${local.appname_client}"
+  reply_urls                 = ["https://${local.appname_client}"]
+  available_to_other_tenants = false
+  oauth2_allow_implicit_flow = true
+  type                       = "native"
+
+  required_resource_access {
+    resource_app_id = "${azuread_application.server.application_id}"
+
+    resource_access {
+      id = "${azuread_application.server.oauth2_permissions.0.id}"
+      type = "Scope"
+    }
+
+  }
+
+}
+
+resource "azuread_service_principal" "client" {
+    application_id = "${azuread_application.client.application_id}"
+}
+
+resource "random_string" "client" {
+  length  = 16
+  special = true
+
+  keepers = {
+    service_principal = "${azuread_service_principal.client.id}"
+  }
+}
+resource "azuread_service_principal_password" "client" {
+    service_principal_id = "${azuread_service_principal.server.id}"
+    value                = "${random_string.server.result}"    
+    end_date             = "${local.end_date}"
+    lifecycle {
+        ignore_changes = ["end_date"]
+    }
+    provisioner "local-exec" {
+        command = "sleep 30"
+    }
+}
