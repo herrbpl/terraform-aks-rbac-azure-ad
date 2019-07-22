@@ -85,7 +85,18 @@ resource "azuread_service_principal_password" "server" {
 }
 
 # grant permissions for server app
-# TODO: bash 
+resource "null_resource" "server_grants" {
+    triggers = {
+      oauth2_permissions = "${join(",", azuread_application.server.oauth2_permissions.*.id)}"
+    }
+    provisioner "local-exec" {
+      command = <<EOF
+        az ad app permission grant --id ${azuread_application.server.application_id} --api ${azuread_application.server.oauth2_permissions.*.id} --scope ${azuread_application.server.oauth2_permissions.*.value}
+EOF
+    }
+    depends_on = ["azuread_application.server", "azuread_service_principal_password.server"]
+    
+}
 
 # client application
 
@@ -131,4 +142,18 @@ resource "azuread_service_principal_password" "client" {
     provisioner "local-exec" {
         command = "sleep 30"
     }
+}
+
+# grant permissions for client app
+resource "null_resource" "client_grants" {
+    triggers = {
+      oauth2_permissions = "${join(",", azuread_application.client.oauth2_permissions.*.id)}"
+    }
+    provisioner "local-exec" {
+      command = <<EOF
+        az ad app permission grant --id ${azuread_application.client.application_id} --api ${azuread_application.client.oauth2_permissions.*.id} --scope ${azuread_application.client.oauth2_permissions.*.value}
+EOF
+    }
+    depends_on = ["azuread_application.client", "azuread_service_principal_password.client"]
+    
 }
