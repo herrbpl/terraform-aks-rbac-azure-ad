@@ -10,6 +10,6 @@ EOF
 }
 
 output "tenant_id" {
-    value = "${fileexists("tenantid.txt") ? file("tenantid.txt") : "NOT ININTIALIZED" }"
+    value = "${trimspace(fileexists("tenantid.txt") ? file("tenantid.txt") : "NOT ININTIALIZED") }"
     depends_on = ["null_resource.tenant"]
 }
