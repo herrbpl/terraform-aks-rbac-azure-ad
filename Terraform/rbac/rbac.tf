@@ -84,10 +84,10 @@ resource "azuread_service_principal_password" "server" {
     lifecycle {
         ignore_changes = ["end_date"]
     }
-    provisioner "local-exec" {
-        command = "Start-Sleep -Seconds 30"
-        interpreter = ["PowerShell", "-Command"]
-    }
+    #provisioner "local-exec" {
+    #    command = "Start-Sleep -Seconds 30"
+    #    interpreter = ["PowerShell", "-Command"]
+    #}
 }
 
 resource "null_resource" "server_password" {
@@ -161,11 +161,25 @@ resource "azuread_service_principal_password" "client" {
     lifecycle {
         ignore_changes = ["end_date"]
     }
-    provisioner "local-exec" {
-        command = "Start-Sleep -Seconds 30"
-        interpreter = ["PowerShell", "-Command"]
-    }
+    #provisioner "local-exec" {
+    #    command = "Start-Sleep -Seconds 30"
+    #    interpreter = ["PowerShell", "-Command"]
+    #}
 }
+
+resource "null_resource" "client_password" {
+    triggers = {
+      application_id = "${azuread_application.client.application_id}"
+    }
+    provisioner "local-exec" {
+      command = <<EOF
+        az ad sp credential reset --name ${azuread_application.client.name} --end-date '${local.end_date}' --password  ${random_string.client.result}    
+EOF
+    }
+    depends_on = ["azuread_application.client", "azuread_service_principal.client","random_string.client"]
+    
+}
+
 
 
 # grant permissions for client app
