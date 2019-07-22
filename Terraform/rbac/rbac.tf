@@ -136,8 +136,8 @@ resource "random_string" "client" {
   }
 }
 resource "azuread_service_principal_password" "client" {
-    service_principal_id = "${azuread_service_principal.server.id}"
-    value                = "${random_string.server.result}"    
+    service_principal_id = "${azuread_service_principal.client.id}"
+    value                = "${random_string.client.result}"    
     end_date             = "${local.end_date}"
     lifecycle {
         ignore_changes = ["end_date"]
