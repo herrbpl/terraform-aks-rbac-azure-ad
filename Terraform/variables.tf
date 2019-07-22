@@ -18,11 +18,15 @@ variable "rbac_client_app_id" {
     }
 
 variable "prefix" {
-  default = "pixelrobots-tst"
+  default = ""
+}
+
+variable "env" {
+  default = "dev"
 }
 
 variable "location" {
-  default     = "East US"
+  default     = "North Europe"
   description = "The Azure Region in which all resources in this example should be provisioned"
 }
 
@@ -33,7 +37,7 @@ variable "public_ssh_key_path" {
 }
 
 variable "admin_username" {
-    default = "PR_admin"
+    default = "sysuser01"
 }
 variable "kubernetes_version" {
     default = "1.11.5"
