@@ -4,7 +4,7 @@ module "tenantinfo" {
 
 locals {
   env = "${var.env == "" ? "dev" : var.env}"  
-  tenantid = "${var.tenantid == "" ? module.tenantinfo.tenantid : var.tenantid}"
+  tenant_id = "${var.tenant_id == "" ? module.tenantinfo.tenant_id : var.tenant_id}"
 }
 
 resource "azurerm_resource_group" "k8s" {
@@ -83,7 +83,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
             server_app_id     = "${var.rbac_server_app_id}"
             server_app_secret = "${var.rbac_server_app_secret}"
             client_app_id     = "${var.rbac_client_app_id}"
-            tenant_id         = "${var.tenant_id}"
+            tenant_id         = "${local.tenant_id}"
         }
     }
 
