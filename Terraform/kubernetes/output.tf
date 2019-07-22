@@ -21,3 +21,11 @@ output "docker_bridge_cidr" {
 output "pod_cidr" {
   value = "${azurerm_kubernetes_cluster.k8s.network_profile.0.pod_cidr}"
 }
+
+output "kube_admin_config_raw" {
+  value = "${azurerm_kubernetes_cluster.k8s.kube_admin_config_raw}"
+}
+
+output "kube_config_raw" {
+  value = "${azurerm_kubernetes_cluster.k8s.kube_config_raw}"
+}
