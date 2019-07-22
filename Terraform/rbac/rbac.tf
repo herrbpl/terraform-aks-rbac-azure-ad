@@ -93,7 +93,8 @@ resource "null_resource" "server_grants" {
     provisioner "local-exec" {
       command = <<EOF
         %{ for permission in azuread_application.server.required_resource_access.* ~}
-az ad app permission grant --id ${azuread_application.server.application_id} --api ${permission.resource_app_id} %{ endfor ~}
+az ad app permission grant --id ${azuread_application.server.application_id} --api ${permission.resource_app_id} 
+%{ endfor ~}
 EOF
     }
     depends_on = ["azuread_application.server", "azuread_service_principal_password.server"]
@@ -156,7 +157,8 @@ resource "null_resource" "client_grants" {
     provisioner "local-exec" {
       command = <<EOF
         %{ for permission in azuread_application.client.required_resource_access.* ~}
-az ad app permission grant --id ${azuread_application.client.application_id} --api ${permission.resource_app_id} %{ endfor ~}
+az ad app permission grant --id ${azuread_application.client.application_id} --api ${permission.resource_app_id} 
+%{ endfor ~}
 EOF
     }
     depends_on = ["azuread_application.client", "azuread_service_principal_password.client"]
