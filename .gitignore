@@ -1,1 +1,3 @@
 Terraform/backend.tfvars
+Terraform/.terraform/*
+Terraform/tenantid.txt

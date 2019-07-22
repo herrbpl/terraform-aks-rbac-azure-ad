@@ -28,3 +28,13 @@ az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/V
 # register provider
 az provider register --namespace Microsoft.ContainerService
 ```
+
+## Create required Azure apps and service principals
+
+Check https://pixelrobots.co.uk/2019/02/create-a-rbac-azure-kubernetes-services-aks-cluster-with-azure-active-directory-using-terraform/ 
+
+Or https://github.com/jcorioland/aks-rbac-azure-ad/tree/master/azure-ad
+
+
+
+
