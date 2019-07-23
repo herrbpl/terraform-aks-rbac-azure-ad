@@ -5,6 +5,18 @@ module "tenantinfo" {
 locals {
   env = "${var.env == "" ? "dev" : var.env}"  
   tenant_id = "${var.tenant_id == "" ? module.tenantinfo.tenant_id : var.tenant_id}"
+  agent_pool_config = [
+    for ex in var.agent_pool_config: merge({   
+      name = "agentpool",
+      count = 1,
+      vm_size = "Standard_B2s",
+      os_type = "Linux",
+      os_disk_size_gb = 30,
+      max_pods = 50,
+      type = "AvailabilitySet",
+      vnet_subnet_id = null,    
+  }, ex)
+  ]
 }
 
 resource "azurerm_resource_group" "k8s" {
@@ -51,16 +63,30 @@ resource "azurerm_kubernetes_cluster" "k8s" {
     }
   }
 
-  agent_pool_profile {
-    name            = "agentpool"
-    count           = "2"
-    vm_size         = "Standard_B2s"
-    os_type         = "Linux"
-    os_disk_size_gb = 30
+  #agent_pool_profile {
+  #  name            = "agentpool"
+  #  count           = "2"
+  #  vm_size         = "Standard_B2s"
+  #  os_type         = "Linux"
+  #  os_disk_size_gb = 30
 
     # Required for advanced networking
-    vnet_subnet_id = "${azurerm_subnet.k8s.id}"
-  }
+  #  vnet_subnet_id = "${azurerm_subnet.k8s.id}"
+  #}
+
+
+  dynamic "agent_pool_profile" {
+    iterator = profile
+    for_each = local.agent_pool_config
+    content {
+      name   = profile.value.name
+      count     = profile.value.count
+      vm_size    = profile.value.vm_size      
+      os_type         = "${profile.value.os_type == null ? "Linux" : profile.value.os_type }"
+      os_disk_size_gb = 30
+      vnet_subnet_id = "${azurerm_subnet.k8s.id}"
+    }
+  }  
 
   service_principal {
     client_id     = "${var.client_id}"

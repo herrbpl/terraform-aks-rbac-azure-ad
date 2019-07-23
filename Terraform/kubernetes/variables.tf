@@ -42,3 +42,28 @@ variable "admin_username" {
 variable "kubernetes_version" {
     default = "1.13.5"
 }
+
+variable "agent_pool_config" {
+  # type = list(object({
+  #  name            = string
+  #  count           = number
+  #  vm_size         = string 
+  #  os_type         = string   
+  #  os_disk_size_gb = number
+  #  max_pods        = number
+  #  type            = string
+  #  vnet_subnet_id  = string
+  #}))
+  default = [
+    {
+      name = "agentpool",
+      count = 1,
+      vm_size = "Standard_B2s",
+      os_type = "Linux",
+      os_disk_size_gb = 30,
+      max_pods = 50,
+      type = "AvailabilitySet",
+      vnet_subnet_id = null,
+    },
+  ]
+}
