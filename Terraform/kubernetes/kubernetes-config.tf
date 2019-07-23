@@ -44,7 +44,7 @@ resource "kubernetes_cluster_role_binding" "setadmingroup" {
 }
 
 resource "kubernetes_cluster_role_binding" "dashboard" {
-    count = "${var.EnableDashboard == "true" ? 1 : 0}"
+    count = "${var.EnableDashboard  ? 1 : 0}"
     metadata {
         name        = "terracreated-clusteradminrole-dashboard-access"
     }
