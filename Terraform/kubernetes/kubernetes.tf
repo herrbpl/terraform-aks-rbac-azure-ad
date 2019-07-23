@@ -83,7 +83,9 @@ resource "azurerm_kubernetes_cluster" "k8s" {
       count     = profile.value.count
       vm_size    = profile.value.vm_size      
       os_type         = "${profile.value.os_type == null ? "Linux" : profile.value.os_type }"
-      os_disk_size_gb = 30
+      os_disk_size_gb = "${profile.value.os_disk_size_gb == null ? 30 : profile.value.os_disk_size_gb }"
+      max_pods = "${profile.value.max_pods == null ? 30 : profile.value.max_pods }"
+      type = "${profile.value.type == null ? "AvailabilitySet" : profile.value.type }"
       vnet_subnet_id = "${azurerm_subnet.k8s.id}"
     }
   }  
