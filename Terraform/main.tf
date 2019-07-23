@@ -33,6 +33,7 @@ module "kubernetes" {
   ]
   AADAdminGroup = "d1237dd7-0369-4a32-a258-5f3d587620d7"
   EnableDashboard = true
+  EnableGlobalTiller = true
 }
 
 output "kube_admin_config_raw" {

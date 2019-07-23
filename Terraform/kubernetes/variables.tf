@@ -48,6 +48,10 @@ variable "EnableDashboard" {
     type = bool
     default = "true"
 }
+variable "EnableGlobalTiller" {
+    type = bool
+    default = "true"
+}
 
 variable "admin_username" {
     default = "sysuser01"

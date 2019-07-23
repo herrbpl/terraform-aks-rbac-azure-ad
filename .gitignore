@@ -2,3 +2,4 @@ Terraform/backend.tfvars
 Terraform/.terraform/*
 Terraform/tenantid.txt
 Terraform/a.plan
+dev-aks/*
