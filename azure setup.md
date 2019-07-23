@@ -56,3 +56,6 @@ openssl x509 -req -CA ca.cert.pem -CAkey ca.key.pem -CAcreateserial -in helm.csr
 ```bash
 helm init --dry-run --debug --tiller-tls --tiller-tls-cert ./tiller.cert.pem --tiller-tls-key ./tiller.key.pem --tiller-tls-verify --tls-ca-cert ca.cert.pem --service-account=tiller-system --tiller-namespace=kube-system --override "spec.template.spec.containers[0].command={/tiller,--storage=secret}" --node-selectors "beta.kubernetes.io/os=linux" > helm.yaml
 ```
+
+# TODO
+- Add helm initialization as terraform module/code

@@ -21,14 +21,9 @@ module "kubernetes" {
   rbac_client_app_id = "${module.rbac.client_application_id}"
   agent_pool_config = [ {
       name = "agentpool",
-      count = 2,
-      type = "VirtualMachineScaleSets"
-   },
-   {
-      name = "secondpool",
-      count = 1,
-      vm_size = "Standard_B2s",
-      type = "VirtualMachineScaleSets"
+      count = 3,
+      type = "VirtualMachineScaleSets",
+      vm_size = "Standard_D2s_v3"
    }
   ]
   AADAdminGroup = "d1237dd7-0369-4a32-a258-5f3d587620d7"
