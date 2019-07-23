@@ -47,6 +47,10 @@ resource "azuread_application" "server" {
       type = "Scope"
     }
   }
+  provisioner "local-exec" {
+       command = "Start-Sleep -Seconds 30"
+        interpreter = ["PowerShell", "-Command"]
+  }
 }
 
 # update server manifest group membership claims
@@ -84,10 +88,7 @@ resource "azuread_service_principal_password" "server" {
     lifecycle {
         ignore_changes = ["end_date"]
     }
-    #provisioner "local-exec" {
-    #    command = "Start-Sleep -Seconds 30"
-    #    interpreter = ["PowerShell", "-Command"]
-    #}
+    
 }
 
 resource "null_resource" "server_password" {
@@ -139,6 +140,10 @@ resource "azuread_application" "client" {
     }
 
   }
+  provisioner "local-exec" {
+       command = "Start-Sleep -Seconds 30"
+        interpreter = ["PowerShell", "-Command"]
+  }
 
 }
 
@@ -160,11 +165,7 @@ resource "azuread_service_principal_password" "client" {
     end_date             = "${local.end_date}"
     lifecycle {
         ignore_changes = ["end_date"]
-    }
-    #provisioner "local-exec" {
-    #    command = "Start-Sleep -Seconds 30"
-    #    interpreter = ["PowerShell", "-Command"]
-    #}
+    } 
 }
 
 resource "null_resource" "client_password" {
