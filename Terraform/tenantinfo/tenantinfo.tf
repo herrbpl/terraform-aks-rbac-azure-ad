@@ -1,6 +1,7 @@
 resource "null_resource" "tenant" {
     triggers = {
-        build_number = "${timestamp()}"
+       # build_number = "${timestamp()}"
+       build_number = "${trimspace(fileexists("tenantid.txt") ? file("tenantid.txt") : timestamp()) }"
     }
     provisioner "local-exec" {
         command = <<EOF
