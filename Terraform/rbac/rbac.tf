@@ -97,7 +97,7 @@ resource "null_resource" "server_password" {
     }
     provisioner "local-exec" {
       command = <<EOF
-        az ad sp credential reset --name ${azuread_application.server.name} --end-date '${local.end_date}' --password  ${random_string.server.result}    
+az ad sp credential reset --name ${azuread_application.server.name} --end-date ${local.end_date} --password  ${random_string.server.result}    
 EOF
     }
     depends_on = ["azuread_application.server", "azuread_service_principal.server","random_string.server"]
@@ -174,7 +174,7 @@ resource "null_resource" "client_password" {
     }
     provisioner "local-exec" {
       command = <<EOF
-        az ad sp credential reset --name ${azuread_application.client.name} --end-date '${local.end_date}' --password  ${random_string.client.result}    
+az ad sp credential reset --name ${azuread_application.client.name} --end-date ${local.end_date} --password  ${random_string.client.result}    
 EOF
     }
     depends_on = ["azuread_application.client", "azuread_service_principal.client","random_string.client"]
