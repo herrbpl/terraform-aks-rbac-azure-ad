@@ -36,11 +36,19 @@ variable "public_ssh_key_path" {
 
 }
 
+variable "AADAdminUser" {
+    default = ""
+}
+
+variable "AADAdminGroup" {
+    default = ""
+}
+
 variable "admin_username" {
     default = "sysuser01"
 }
 variable "kubernetes_version" {
-    default = "1.13.5"
+    default = "1.13.7"
 }
 
 variable "agent_pool_config" {
