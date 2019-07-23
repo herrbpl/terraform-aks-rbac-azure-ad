@@ -36,5 +36,23 @@ Check https://pixelrobots.co.uk/2019/02/create-a-rbac-azure-kubernetes-services-
 Or https://github.com/jcorioland/aks-rbac-azure-ad/tree/master/azure-ad
 
 
+## TLS cert creation
 
+```bash
+openssl genrsa -out ./ca.key.pem 4096
+openssl req -key ca.key.pem -new -x509 -days 7300 -sha256 -out ca.cert.pem -extensions v3_ca
+openssl genrsa -out ./tiller.key.pem 4096
+openssl genrsa -out ./helm.key.pem 4096
+openssl req -key tiller.key.pem -new -sha256 -out tiller.csr.pem
+openssl req -key helm.key.pem -new -sha256 -out helm.csr.pem
+echo subjectAltName=IP:127.0.0.1 > extfile.cnf
+openssl x509 -req -CA ca.cert.pem -CAkey ca.key.pem -CAcreateserial -in tiller.csr.pem -out tiller.cert.pem -days 365 -extfile extfile.cnf
+openssl x509 -req -CA ca.cert.pem -CAkey ca.key.pem -CAcreateserial -in helm.csr.pem -out helm.cert.pem  -days 365
 
+```
+
+## helm init
+
+```bash
+helm init --dry-run --debug --tiller-tls --tiller-tls-cert ./tiller.cert.pem --tiller-tls-key ./tiller.key.pem --tiller-tls-verify --tls-ca-cert ca.cert.pem --service-account=tiller-system --tiller-namespace=kube-system --override "spec.template.spec.containers[0].command={/tiller,--storage=secret}" --node-selectors "beta.kubernetes.io/os=linux" > helm.yaml
+```
