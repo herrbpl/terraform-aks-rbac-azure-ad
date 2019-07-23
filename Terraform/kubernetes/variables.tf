@@ -44,6 +44,11 @@ variable "AADAdminGroup" {
     default = ""
 }
 
+variable "EnableDashboard" {
+    type = bool
+    default = "true"
+}
+
 variable "admin_username" {
     default = "sysuser01"
 }
