@@ -9,7 +9,7 @@ terraform {
 
 module "rbac" {
     source = "./rbac"
-    prefix = "elk"
+    prefix = "elk-"
     env = "dev"
 }
 
@@ -31,7 +31,7 @@ module "kubernetes" {
     AADAdminGroup = "d1237dd7-0369-4a32-a258-5f3d587620d7"
     EnableDashboard = true
     EnableGlobalTiller = true
-    prefix = "elk"
+    prefix = "elk-"
     env = "dev"
 }
 

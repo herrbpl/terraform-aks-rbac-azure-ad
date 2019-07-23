@@ -20,7 +20,7 @@ locals {
 }
 
 resource "azurerm_resource_group" "k8s" {
-  name     = "${var.prefix}${local.env}-AKS"
+  name     = "${var.prefix}${local.env}-aks"
   location = "${var.location}"
   tags       = {
     Project     = "${var.prefix}"    
