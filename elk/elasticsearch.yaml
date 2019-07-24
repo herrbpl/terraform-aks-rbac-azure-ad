@@ -1,0 +1,7 @@
+
+volumeClaimTemplate:
+  accessModes: [ "ReadWriteOnce" ]
+  storageClassName: "managed-premium"
+  resources:
+    requests:
+      storage: 32Gi
