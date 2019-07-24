@@ -74,7 +74,7 @@ resource "azuread_service_principal" "server" {
 resource "random_string" "server" {
   length  = 16
   special = true
-
+  override_special = "!.="
   keepers = {
     service_principal = "${azuread_service_principal.server.id}"
   }
@@ -154,7 +154,7 @@ resource "azuread_service_principal" "client" {
 resource "random_string" "client" {
   length  = 16
   special = true
-
+  override_special = "!.="
   keepers = {
     service_principal = "${azuread_service_principal.client.id}"
   }

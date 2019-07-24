@@ -59,3 +59,31 @@ helm init --dry-run --debug --tiller-tls --tiller-tls-cert ./tiller.cert.pem --t
 
 # TODO
 - Add helm initialization as terraform module/code
+
+## install elasticsearch with helm
+
+Should part infra setup from app setup
+
+### Add repo
+
+```bash
+helm repo add elastic https://helm.elastic.co
+```
+
+### install elasticsearc
+
+```bash
+helm install --name elasticsearch elastic/elasticsearch -f elasticsearch.yaml --tls
+```
+ 
+### install kibana
+
+```bash
+helm install --name kibana elastic/kibana --tls
+```
+
+### install metric beats
+
+```bash
+helm install --name metricbeat elastic/metricbeat --tls
+```
