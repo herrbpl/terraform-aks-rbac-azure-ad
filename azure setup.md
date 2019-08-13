@@ -68,6 +68,7 @@ Should part infra setup from app setup
 
 ```bash
 helm repo add elastic https://helm.elastic.co
+helm repo add kubernetes  https://kubernetes-charts.storage.googleapis.com/
 ```
 
 ### install elasticsearc
@@ -86,4 +87,10 @@ helm install --name kibana elastic/kibana --tls
 
 ```bash
 helm install --name metricbeat elastic/metricbeat --tls
+```
+
+### install filebeat
+
+```bash
+helm install --name filebeat elastic/filebeat -f filebeat.yaml --tls
 ```

@@ -1,0 +1,44 @@
+filebeatConfig:
+  filebeat.yml: |    
+    filebeat.autodiscover:
+      providers:
+        - type: kubernetes
+        #  hints.enabled: true
+        #  hints.default_config:
+        #    type: container            
+        #    paths:
+        #      - /var/lib/docker/containers/${data.kubernetes.container.id}/*.log
+        #    exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
+
+          templates:
+            - condition.contains:
+                kubernetes.container.image: httpd
+              config:
+                - module: apache
+                  enabled: true
+                  access:
+                    input:
+                      type: container
+                      paths:
+                        - /var/lib/docker/containers/${data.kubernetes.container.id}/*.log
+                      var.paths:
+                        - /var/lib/docker/containers/${data.kubernetes.container.id}/*.log
+                      containers.ids:
+                        - ${data.kubernetes.container.id}
+                  error:
+                    input:
+                      type: container
+                      paths:
+                        - /var/lib/docker/containers/${data.kubernetes.container.id}/*.log
+                      var.paths:
+                        - /var/lib/docker/containers/${data.kubernetes.container.id}/*.log
+                      containers.ids:
+                        - ${data.kubernetes.container.id}          
+                        
+      processors:     
+      - add_cloud_metadata: ~
+      - add_kubernetes_metadata:
+          in_cluster: true
+      - add_docker_metadata: ~
+    output.elasticsearch:
+      hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'

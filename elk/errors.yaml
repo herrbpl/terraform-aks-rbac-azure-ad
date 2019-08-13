@@ -1,0 +1,44 @@
+filebeat.autodiscover:
+    # Autodiscover docker containers and parse logs
+      providers:
+        - type: kubernetes
+          hints.enabled: true
+          hints.default_config:
+            type: container
+            containers.ids:
+              - "${data.kubernetes.container.id}"
+            paths:
+              - /var/log/container/*-${data.kubernetes.container.id}.log
+            exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
+
+          templates:
+            - condition.contains:
+                kubernetes.labels.app: lamp
+              config:
+                - module: apache
+                  access:
+                    input:
+                      type: container
+                      containers.ids:
+                        - ${data.kubernetes.container.id}
+                  error:
+                    input:
+                      type: container
+                      containers.ids:
+                        - ${data.kubernetes.container.id}          
+                - module: mysql
+                  error:
+                    input:
+                      type: container
+                      containers.ids:
+                        - ${data.kubernetes.container.id}
+                  slowlog:
+                    input:
+                      type: container
+                      containers.ids:
+                        - ${data.kubernetes.container.id}              
+      processors:     
+      - add_cloud_metadata: ~
+      - add_kubernetes_metadata: ~
+      - add_docker_metadata: ~
+    
